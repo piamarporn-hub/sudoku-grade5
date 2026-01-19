@@ -1,146 +1,549 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
-<meta charset="UTF-8">
-<title>Sudoku 6x6 – แบบฝึก</title>
+  <meta charset="UTF-8">
+  <title>Sudoku 6x6 – แบบฝึก</title>
 
-<style>
-body{
-  font-family:"Kanit",sans-serif;
-  background:#f2f6fb;
-  text-align:center;
-  padding:20px;
-}
 
-.hidden{display:none}
+  <style>
+    body {
+      font-family: "Kanit", sans-serif;
+      background: #f2f6fb;
+      text-align: center;
+      padding: 20px;
+    }
 
-.card{
-  background:white;
-  max-width:420px;
-  margin:15px auto;
-  padding:20px;
-  border-radius:16px;
-  box-shadow:0 8px 20px rgba(0,0,0,.1);
-}
+    .hidden {
+      display: none
+    }
 
-button,select{
-  padding:10px 16px;
-  border:none;
-  border-radius:10px;
-  background:#3f5f93;
-  color:white;
-  font-size:15px;
-  cursor:pointer;
-  margin:6px;
-}
+    .card {
+      background: white;
+      max-width: 960px;   /* 🔥 กว้างขึ้น */
+      width: 100%;
+      margin: 20px auto;
+      padding: 30px;      /* 🔥 เว้นขอบในให้โล่ง */
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, .1);
+      text-align: center;   
+    }
 
-select{background:#5a7cc1}
+    button,
+    select {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 10px;
+      background: #3f5f93;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+      margin: 6px;
+    }
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  grid-template-rows:repeat(6,1fr);
-  width:300px;
-  height:300px;
-  margin:15px auto;
-  border:4px solid #3f5f93;
-}
+    select {
+      background: #5a7cc1
+    }
 
-.cell{
-  background:#f7fbff;
-  border:1px solid #b7c9dd;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
-}
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-template-rows: repeat(6, 1fr);
+      width: 300px;
+      height: 300px;
+      margin: 15px auto;
+      border: 4px solid #3f5f93;
+    }
 
-.cell input{
-  width:100%;
-  height:100%;
-  border:none;
-  text-align:center;
-  font-size:20px;
-  outline:none;
-  background:none;
-}
+    .cell {
+      background: #f7fbff;
+      border: 1px solid #b7c9dd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
 
-.fixed{
-  background:#eaf1fb;
-  font-weight:bold;
-}
+    .cell input {
+      width: 100%;
+      height: 100%;
+      border: none;
+      text-align: center;
+      font-size: 20px;
+      outline: none;
+      background: none;
+    }
 
-.correct{background:#c9f7c5}
-.wrong{background:#f7c5c5}
-</style>
+    .fixed {
+      background: #eaf1fb;
+      font-weight: bold;
+    }
+
+    .correct {
+      background: #c9f7c5
+    }
+
+    .wrong {
+      background: #f7c5c5
+    }
+
+    .realExam{
+      max-width: 1100px;     /* 🔥 กว้างกว่าหน้าอื่น */
+      min-height: 80vh;
+      font-size: 20px;
+      margin: 20px auto;
+      text-align: left;     /* 🔑 ตัด center จาก body */
+    }
+    .questionText{
+      font-size: 22px;
+      margin-bottom: 20px;
+      line-height: 1.7;
+      text-align: left;
+    }
+    .choice-grid label{
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 12px;
+      cursor: pointer;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .q-title{
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+    .q-cond-title{
+      margin-left: 1.8em;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+/* 🔥 ตัวนี้คือหัวใจ */
+    .q-cond{
+      margin: 0 0 16px 3.5em;   /* ตัด margin default */
+      padding-left: 1.5em;
+    }
+    .q-cond li{
+      margin: 6px 0;
+    }
+    .q-question{
+      margin-left: 1.8em;
+      margin-bottom: 14px;
+      /*font-weight: bold;*/
+    }
+    .exam-table{
+      border-collapse: collapse;
+      margin: 16px auto 20px;
+    }
+    .exam-table td{
+      width: 48px;
+      height: 48px;
+      border: 2px solid #000;
+      text-align: center;
+      font-size: 18px;
+    }
+    .exam-table .blank{
+       background: #fff6cc;
+       font-weight: bold;
+    } 
+    .exam-table .mark{
+      background: #e6f4ff;
+      box-shadow: inset 0 0 0 2px #4aa3df;
+      font-weight: bold;
+    }
+    .exam-table .mark span{
+      color: #1f5fa0;
+      font-size: 18px;
+    }
+    .sudoku-table{
+      border-collapse: collapse;
+      margin: 16px auto;
+    }
+
+    .sudoku-table td{
+      width: 46px;
+      height: 46px;
+      border: 2px solid #000;
+      text-align: center;
+    }
+    .sudoku-table input{
+      width: 100%;
+      height: 100%;
+      border: none;
+      text-align: center;
+      font-size: 18px;
+      outline: none;
+    }
+    /* เส้นแบ่งบล็อก 3×2 */
+    .sudoku-table td:nth-child(3){
+      border-right: 4px solid #000;
+    }
+    .sudoku-table tr:nth-child(2) td,
+    .sudoku-table tr:nth-child(4) td{
+      border-bottom: 4px solid #000;
+    }
+    .exam-mark{
+      background:#e6f4ff;
+      box-shadow: inset 0 0 0 2px #4aa3df;
+      font-weight:bold;
+      color:#1f5fa0;
+    }
+    .exam-blank{
+      background:#fff6cc;
+    }
+  </style>
 </head>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 
 <script>
   const firebaseConfig = {
-    databaseURL: "https://sudoku-for-grade-5-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    apiKey: "AIzaSyDde_uykmCX-X0mtVB8WO8Gu5UQBTT41qw",
+    authDomain: "sudoku-for-grade-5.firebaseapp.com",
+    databaseURL: "https://sudoku-for-grade-5-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "sudoku-for-grade-5",
+    storageBucket: "sudoku-for-grade-5.firebasestorage.app",
+    messagingSenderId: "570109667126",
+    appId: "1:570109667126:web:9ac179145905ede298b597"
   };
+
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 </script>
 
-<script>
-function saveScore(mode, score){
-  const student = JSON.parse(localStorage.getItem("student"));
-  if(!student) return;
 
-  db.ref(`rooms/${student.class}/students/${student.no}`).update({
-    name: student.name,
-    no: student.no,
-    class: student.class,
-    [mode]: score,
-    lastUpdate: Date.now()
-  });
-}
+<script>
+  function saveScore(mode, score) {
+    const student = JSON.parse(localStorage.getItem("student"));
+    if (!student) return;
+
+    db.ref(`rooms/${student.class}/students/${student.no}`).update({
+      name: student.name,
+      no: student.no,
+      class: student.class,
+      [mode]: score,
+      lastUpdate: Date.now()
+    });
+  }
 </script>
 
+<script>
+const examQuestions = [
+  { /*ข้อที่ 1*/
+    title: "1) มีนักเรียน 3 คน คือ ก, ข และ ค ยืนเรียงกันเป็นแถว",
+    conditionTitle: "เงื่อนไข:",
+    conditions: [
+      "ค ยืนติดกับ ก",
+      "ข ไม่ได้ยืนติดกับ ก"
+    ],
+    question: "ใครยืนอยู่ตรงกลางแถว?",
+    choices: ["ก. นาย ก","ข. นาย ข","ค. นาย ค","ง. สรุปไม่ได้"],
+    answer: 1
+  },
+  { /*ข้อที่ 2*/
+    title: "2) มีสี 4 สี คือ แดง, น้ำเงิน, เขียว และ เหลือง เรียงจากซ้ายไปขวา",
+    conditionTitle: "เงื่อนไข:",
+    conditions: [
+      "แดงต้องมาก่อนเขียว",
+      "น้ำเงินอยู่หลังเหลือง",
+      "เหลืองอยู่ก่อนแดงและเขียว"
+    ],
+    question: "ลำดับสีที่ถูกต้องคือข้อใด?",
+    choices: [
+      "ก. แดง เหลือง เขียว น้ำเงิน",
+      "ข. เหลือง แดง เขียว น้ำเงิน",
+      "ค. เหลือง เขียว แดง น้ำเงิน",
+      "ง. น้ำเงิน เหลือง แดง เขียว"
+    ],
+    answer: 1
+  },
+  {/*ข้อที่ 3*/
+    title: "3) ถ้าเลขที่ป้อนเป็นเลขคู่ ให้บวก 5 ถ้าเลขที่ป้อนเป็นเลขคี่ ให้ลบ 2 แล้วถ้าป้อนเลข 14 ผลลัพธ์คือเท่าใด?",
+    choices: ["ก. 12","ข. 16","ค. 19","ง. 10"],
+    answer: 2
+  },
+  {/*ข้อที่ 4*/
+    title: "4) ขั้นตอนที่ 4 ในการชงชาคือ 'เติมน้ำตาล 2 ช้อนชา แล้วคนให้เข้ากัน' ถ้าต้องการให้ชามีรส 'หวาน' การกระทำใดในขั้นตอนที่ 4 ที่อาจทำให้ 'ไม่แน่ใจ' ว่าชาจะหวานจริงหรือไม่?",
+    choices: ["ก. เติมน้ำตาล","ข. คนให้เข้ากัน","ค. ใช้น้ำร้อน","ง. ปริมาณผงชา"],
+    answer: 3
+  },
+  {/*ข้อที่ 5*/
+    title: "5) ถ้าสั่งให้หุ่นยนต์หยิบหนังสือบนโต๊ะ แล้วนำไปวางในกล่องข้าง ๆ ลำดับคำสั่งใดถูกต้องที่สุด?",
+    choices: [
+      "ก. จับหนังสือ → เดินไปที่กล่อง → วางหนังสือลง",
+      "ข. เดินไปที่โต๊ะ → จับหนังสือ  → เดินไปที่กล่อง → วางหนังสือลง",
+      "ค. วางหนังสือลง → เดินไปที่โต๊ะ → จับหนังสือ → เดินไปที่กล่อง ",
+      "ง. เดินไปที่กล่อง → จับหนังสือ → เดินกลับมาที่โต๊ะ → วางหนังสือลง"
+    ],
+    answer: 1
+  },
+  {/*ข้อที่ 6*/
+    title: "6) มีนักเรียน 4 คน: อ้อม, บอย, แก้ว, เด่น",
+    conditionTitle: "เงื่อนไข:",
+    conditions: [
+      "อ้อม > บอย",
+      "แก้ว < บอย",
+      "เด่น > อ้อม"
+    ],
+    question: "ดังนั้นใครมีอายุมากเป็นอันดับสอง?",
+    choices: [
+      "ก. อ้อม",
+      "ข. บอย",
+      "ค. แก้ว",
+      "ง. เด่น"
+    ],
+    answer: 0
+  },
+  {/*ข้อที่ 7*/
+    title: "7)",
+    conditionTitle: "สมมติว่า:",
+    conditions: [
+      "สัตว์เลี้ยงลูกด้วยนม ทั้งหมด บินได้",
+      "นกแก้วเป็นสัตว์เลี้ยงลูกด้วยนม",
+    ],
+    question: "ข้อสรุปใดถูกต้องแน่นอนตามสมมติฐานนี้?",
+    choices: [
+      "ก. นกแก้วบินได้",
+      "ข. มีสัตว์ที่บินไม่ได้เป็นสัตว์เลี้ยงลูกด้วยนม",
+      "ค. สัตว์ที่บินได้ทั้งหมดคือนกแก้ว",
+      "ง. นกแก้วบางตัวอาจบินไม่ได้"
+    ],
+    answer: 0
+  },
+  {/*ข้อที่ 8*/
+    title: "8) รหัสลับ 4 หลักมีคุณสมบัติ:",
+    conditions: [
+      "เป็นเลขคู่",
+      "ผลรวมเลขโดด = 15",
+      "หารด้วย 5 ไม่ลงตัว"
+    ],
+    question: "รหัสลับในข้อใด 'ไม่สามารถ' เป็นไปตามคุณสมบัติได้?",
+    choices: [
+      "ก. 3444",
+      "ข. 9321",
+      "ค. 5064",
+      "ง. 2616"
+    ],
+    answer: 1
+  },
+  {/*ข้อที่ 9*/
+    title: "9) ฟังก์ชัน คือ: 'นำเลขที่ป้อนมา คูณ 3 แล้ว ลบ 1' ถ้าป้อนเลข 5 ผลลัพธ์คือเท่าใด?",
+    choices: [
+      "ก. 14",
+      "ข. 12",
+      "ค. 16",
+      "ง. 15"
+    ],
+    answer: 0
+  },
+  {/*ข้อที่ 10*/
+    title: "10) มีคนพูดจริงแค่ 'คนเดียว' โดยที่",
+    conditions: [
+      "A พูดว่า: 'B ไม่ได้ลอกการบ้าน'",
+      "B พูดว่า: 'C เป็นคนลอกการบ้าน'",
+      "C พูดว่า: 'A พูดโกหก'"
+    ],
+    question: "รใครคือคนที่ 'ลอกการบ้าน'?",
+    choices: [
+      "ก. A",
+      "ข. B",
+      "ค. C",
+      "ง. ไม่มีใครลอก"
+    ],
+    answer: 2
+  },
+  {/*ข้อที่ 11*/
+    title: "11) ผล: ตู้เย็นมีน้ำแข็งเกาะมากผิดปกติ เหตุผลใด 'เป็นสาเหตุหลัก' ที่สุด?",
+    choices: [
+      "ก. ปลั๊กตู้เย็นหลุด",
+      "ข. เปิด-ปิดประตูตู้เย็นบ่อยเกินไป",
+      "ค. ตู้เย็นตั้งอยู่ในที่ร่ม",
+      "ง. ใส่อาหารในตู้เย็นน้อย"
+    ],
+    answer: 1
+  },
+  {/*ข้อที่ 12*/
+    title: "12) กฎ:",
+    conditions: [
+      "ถ้าฝนตก จะไม่เอาร่มไป",
+      "ถ้าไม่เอาร่มไป จะรู้สึกไม่สบายใจ",
+    ],
+    question: "ความจริง: นักเรียนรู้สึกสบายใจ ข้อสรุปใดถูกต้อง?",
+    choices: [
+      "ก. ฝนตก",
+      "ข. นักเรียนนำร่มไปโรงเรียน",
+      "ค. ฝนไม่ตก แต่นักเรียนไม่นำร่มไป",
+      "ง. สรุปไม่ได้"
+    ],
+    answer: 1
+  },
+  {/*ข้อที่ 13*/
+    title: "13) ลำดับตัวเลข “4, 12, 36, 108, ?” ตัวเลขถัดไปคือเท่าใด?",
+    choices: [
+      "ก. 144",
+      "ข. 216",
+      "ค. 324",
+      "ง. 432"
+    ],
+    answer: 2
+  },
+  {/*ข้อที่ 14*/
+    title: "14) หุ่นยนต์เริ่มต้นที่ (1, 1) (แถว, หลัก) คำสั่ง: เดินขวา, เดินลง, เดินขวา, เดินลงหลังทำคำสั่ง 'เดินขวา' ครั้งที่สองเสร็จ หุ่นยนต์จะอยู่ที่ตำแหน่งใด?",
+    choices: [
+      "ก. (1, 3)",
+      "ข. (3, 2)",
+      "ค. (3, 3)",
+      "ง. (2, 3)"
+    ],
+    answer: 3
+  },
+  {/*ข้อที่ 15*/
+    title: "15) ผล: คอมพิวเตอร์ต่ออินเทอร์เน็ตไม่ได้ เหตุผลใดที่ 'ไม่น่าจะเกี่ยวข้อง' กับปัญหานี้?",
+    choices: [
+      "ก. สาย LAN ถูกถอด",
+      "ข. เราเตอร์ (Router) ไม่ได้เปิด",
+      "ค. หน้าจอคอมพิวเตอร์มีรอยแตก",
+      "ง. ไม่ได้ติดตั้งโปรแกรมควบคุม Wi-Fi"
+    ],
+    answer: 2
+  },
+  {/*ข้อที่ 16*/
+    title: "16) จากตารางที่กำหนด ตัวเลขใดที่ควรใส่ในช่องว่าง",
+    grid: [
+    [3, 6, 4, 1, "", 2],
+    [2, 1, 5, 3, 6, 4],
+    [6, 3, 2, 4, 1, 5],
+    [5, 4, 1, 2, 3, 6],
+    [1, 2, 6, 5, 4, 3],
+    [4, 5, 3, 6, 2, 1],
+  ],
+    choices: [
+      "ก. 1",
+      "ข. 3",
+      "ค. 5",
+      "ง. 6"
+    ],
+    answer: 2
+  },
+  {/*ข้อที่ 17*/
+    title: "17) จากตารางที่กำหนด ตัวเลขใดที่ควรใส่ในช่องว่าง A และ B ตามลำดับ",
+    grid: [
+    [1, 6, 5, "B", 2, 4],
+    [4, 2, 3, 1, 5, 6],
+    [3, 1, 6, 5, 4, 2],
+    [2, "A", 4, 6, 3, 1],
+    [6, 3, 2, 4, 1, 5],
+    [5, 4, 1, 2, 6, 3],
+  ],
+    choices: [
+      "ก. 5, 3",
+      "ข. 3, 5",
+      "ค. 2, 1",
+      "ง. 1, 2"
+    ],
+    answer: 0
+  },
+  {/*ข้อที่ 18*/
+    title: "18) จากตารางที่กำหนด ตัวเลขใดที่ควรใส่ในช่องว่าง A, B และ C",
+    grid: [
+    [4, 6, 5, 1, 2, 3],
+    [3, 1, "A", "B", 6, 6],
+    [1, 2, 4, 4, 3, 5],
+    [6, 5, 3, 2, 2, 4],
+    [5, 4, 1, 5, "C", 2],
+    [2, 3, 6, 6, 5, 1],
+  ],
+    choices: [
+      "ก. 2, 6, 4",
+      "ข. 5, 2, 6",
+      "ค. 2, 4, 6",
+      "ง. 6, 4, 2"
+    ],
+    answer: 2
+  },
+  {/*ข้อที่ 19*/
+    title: "19) จากตารางที่กำหนด ตัวเลขใดที่ควรใส่ในช่องว่าง A, B, C และ D",
+    grid: [
+    [1, 4, 3, "C", 5, 6],
+    [5, "A", 6, 1, "D", 3],
+    [2, 3, 1, 5, 6, 4],
+    [4, 6, 5, 3, 1, 2],
+    [3, 1, 4, 6, 2, 5],
+    [6, "B", 2, 4, 3, 1],
+  ],
+    choices: [
+      "ก. 2, 4, 2, 5",
+      "ข. 2, 5, 2, 4",
+      "ค. 4, 5, 2, 2",
+      "ง. 5, 2, 4, 2"
+    ],
+    answer: 1
+  },
+  {/*ข้อที่ 20*/
+    title: "20) จงเติมตัวเลข 1 ถึง 6 ที่หายไปทั้งหมด ลงในช่องว่างของตาราง Sudoku 6 x 6 ให้ถูกต้องสมบูรณ์",
+    type: "sudoku",
+    grid: [
+      [6, "", 5, "", 3, 4],
+      [3, "", "", "", 2, ""],
+      [2, "", "", 4, 6, ""],
+      ["", 6, 4, "", "", ""],
+      ["", "", "", 3, "", ""],
+      ["", 3, 6, "", 1, ""],
+    ],
+    solution: [
+      [6, 2, 5, 1, 3, 4],
+      [3, 4, 1, 6, 2, 5],
+      [2, 5, 3, 4, 6, 1], // ตัวอย่าง (คุณใส่เฉลยจริงแทน)
+      [1, 6, 4, 2, 5, 3],
+      [5, 1, 2, 3, 4, 6],
+      [4, 3, 6, 5, 1, 2],
+    ],
+    score: 1
+    },
+  ];
+
+const examAnswersText = [
+  "1. ข","2. ข","3. ค","4. ง","5. ข",
+  "6. ก","7. ก","8. ข","9.vpkd ก","10. ค",
+  "11. ข","12. ข","13. ค","14. ง","15. ค",
+  "16. ค","17. ก","18. ค","19. ข",
+  "20. ดูเฉลยตาราง Sudoku"
+];
+</script>
 
 <body>
   <div class="card" id="login">
     <h2>🔐 เข้าสู่ระบบ</h2>
-  
+
     <h3>👩‍🎓 นักเรียน</h3>
     <input id="loginName" placeholder="ชื่อ-สกุล"><br><br>
     <input id="loginClass" placeholder="ชั้น" style="width:80px">
     <input id="loginNo" placeholder="เลขที่" style="width:80px"><br><br>
     <button onclick="loginStudent()">เข้าสู่ระบบนักเรียน</button>
-  
+
     <hr>
-  
+
     <h3>👨‍🏫 ครู</h3>
     <input id="teacherPass" type="password" placeholder="รหัสครู"><br><br>
     <button onclick="loginTeacher()">เข้าสู่ระบบครู</button>
-  </div>
 
-  <div class="card hidden" id="teacher">
-    <h3>📊 คะแนนนักเรียน</h3>
-    <table border="1" width="100%">
-      <thead>
-        <tr>
-          <th>เลขที่</th>
-          <th>ชื่อ</th>
-          <th>ฝึก</th>
-          <th>เกม</th>
-          <th>สอบ</th>
-        </tr>
-      </thead>
-      <tbody id="scoreTable"></tbody>
-    </table>
-    <button onclick="goHome()">🏠 กลับ</button>
+    <hr>
+    
+    <h3>📄 ข้อสอบ </h3>
+    <input id="examUser" placeholder="ชื่อผู้สอบ"><br><br>
+    <input id="examClass" placeholder="ชั้น" style="width:80px">
+    <input id="examNo" placeholder="เลขที่" style="width:80px"><br><br>
+    <input id="examPass" type="password" placeholder="รหัสข้อสอบ"><br><br>
+    <button onclick="loginExam()">เข้าสู่ข้อสอบ</button>
   </div>
 
 
   <div class="card hidden" id="teacherPage">
     <h2>📊 รายงานผลนักเรียน</h2>
-  
+
     <table border="1" width="100%" style="border-collapse:collapse">
       <thead>
         <tr>
@@ -149,38 +552,40 @@ function saveScore(mode, score){
           <th>เลขที่</th>
           <th>โหมด</th>
           <th>คะแนน</th>
+          <th>ระดับ</th>   <!-- ✅ เพิ่มตรงนี้ -->
           <th>เวลา</th>
+          <th>PDF</th>     <!-- ✅ เพิ่มตรงนี้ -->
         </tr>
       </thead>
       <tbody id="reportTable"></tbody>
     </table>
-  
+
     <br>
     <button onclick="exportCSV()">⬇️ ดาวน์โหลด CSV</button>
     <script>
-      function exportByMode(mode){
-        db.ref("reports").once("value", snap=>{
+      function exportByMode(mode) {
+        db.ref("reports").once("value", snap => {
           let csv = "ชื่อ,ชั้น,เลขที่,โหมด,คะแนน,เวลา\n";
           let found = false;
-          
-          snap.forEach(child=>{
+
+          snap.forEach(child => {
             const r = child.val();
-            if(r.mode === mode){
+            if (r.mode === mode) {
               found = true;
               csv += `${r.name},${r.class},${r.no},${r.mode},${r.score},${r.time}\n`;
             }
           });
-          
-          if(!found){
+
+          if (!found) {
             alert("ไม่มีข้อมูลโหมด " + mode);
             return;
           }
-          
+
           const BOM = "\uFEFF";
           const blob = new Blob([BOM + csv], {
-            type:"text/csv;charset=utf-8;"
+            type: "text/csv;charset=utf-8;"
           });
-          
+
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
@@ -189,399 +594,822 @@ function saveScore(mode, score){
         });
       }
 
-      </script>
-      <script>
-        function clearReports(){
-          if(!confirm("⚠️ ต้องการล้างคะแนนทั้งหมดใช่หรือไม่?")) return;
-          
-          db.ref("reports").remove();
-          document.getElementById("reportTable").innerHTML = "";
-          
-          alert("🧹 ล้างคะแนนเรียบร้อยแล้ว");
-        }
+    </script>
+    <script>
+      function clearReports() {
+        if (!confirm("⚠️ ต้องการล้างคะแนนทั้งหมดใช่หรือไม่?")) return;
 
-        </script>
-        
+        db.ref("reports").remove();
+        document.getElementById("reportTable").innerHTML = "";
+
+        alert("🧹 ล้างคะแนนเรียบร้อยแล้ว");
+      }
+
+    </script>
+
     <hr>
 
-<h4>📤 Export แยกโหมด</h4>
-<button onclick="exportByMode('แบบฝึก')">📘 แบบฝึก</button>
-<button onclick="exportByMode('เกม')">🎮 เกม</button>
-<button onclick="exportByMode('แบบทดสอบ')">📝 แบบทดสอบ</button>
+    <h4>📤 Export แยกโหมด</h4>
+    <button onclick="exportByMode('แบบฝึก')">📘 แบบฝึก</button>
+    <button onclick="exportByMode('เกม')">🎮 เกม</button>
+    <button onclick="exportByMode('แบบทดสอบ')">📝 แบบทดสอบ</button>
 
-<hr>
+    <hr>
 
-<button onclick="clearReports()" style="background:#c0392b">
-🗑️ ล้างคะแนนทั้งหมด
-</button>
+    <button onclick="clearReports()" style="background:#c0392b">
+      🗑️ ล้างคะแนนทั้งหมด
+    </button>
 
     <button onclick="logout()">🚪 ออกจากระบบ</button>
   </div>
-      
 
-      <div class="card hidden" id="menu">
-        <h2>🧠 Sudoku 6×6</h2>
-        <div id="studentForm">
-            <p>ข้อมูลนักเรียน</p>
-            <input id="stuName" placeholder="ชื่อ-สกุล"><br><br>
-            <input id="stuClass" placeholder="ชั้น" style="width:80px">
-            <input id="stuNo" placeholder="เลขที่" style="width:80px"><br><br>
-          </div>            
 
-      
-        <hr>
-      
-        <h3>โหมดแบบฝึก</h3>
-        <select id="level">
-          <option value="12">ง่าย</option>
-          <option value="16">ปานกลาง</option>
-          <option value="20">ยาก</option>
-        </select><br>
-        <button onclick="startPractice()">📘 เริ่มฝึก</button>
-      
-        <hr>
-      
-        <button onclick="startGame()">🎮 เล่นเกม</button>
-        <button onclick="startExam()">📝 แบบทดสอบ</button>
-        <hr>
-<button onclick="logout()">🚪 ออกจากระบบ</button>
+  <div class="card hidden" id="menu">
+    <h2>🧠 Sudoku 6×6</h2>
+    <div id="studentForm">
+      <p>ข้อมูลนักเรียน</p>
+      <input id="stuName" placeholder="ชื่อ-สกุล"><br><br>
+      <input id="stuClass" placeholder="ชั้น" style="width:80px">
+      <input id="stuNo" placeholder="เลขที่" style="width:80px"><br><br>
+    </div>
+    <div id="teacherPanel" class="hidden">
+      <h2>👩‍🏫 เมนูครู</h2>
+      <button onclick="exportCSV()">📤 Export คะแนน (CSV)</button>
+      <button onclick="clearRoomScores()">🧹 ล้างคะแนนทั้งห้อง</button>
+      <button onclick="teacherLogout()">🚪 ออกจากระบบครู</button>
+    </div>
 
-      </div>
-      
 
-<div class="card hidden" id="practice">
+
+    <hr>
+
+    <h3>โหมดแบบฝึก</h3>
+    <select id="level">
+      <option value="12">ง่าย</option>
+      <option value="16">ปานกลาง</option>
+      <option value="20">ยาก</option>
+    </select><br>
+    <button onclick="startPractice()">📘 เริ่มฝึก</button>
+
+    <hr>
+
+    <button onclick="startGame()">🎮 เล่นเกม</button>
+    <button onclick="startExam()">📝 แบบทดสอบ</button>
+    <hr>
+    <button onclick="logout()">🚪 ออกจากระบบ</button>
+
+  </div>
+
+
+  <div class="card hidden" id="practice">
     <p>👤 <span id="stuInfoPractice"></span></p>
-  <h3 id="levelText"></h3>
-  <p>คะแนนสะสม: <span id="score">0</span></p>
-  <div id="grid" class="grid"></div>
-  <button onclick="checkAnswer()">ตรวจคำตอบ</button>
-  <button onclick="newPuzzle()">ข้อต่อไป</button>
-  <button onclick="backMenu()">กลับเมนู</button>
-</div>
+    <h3 id="levelText"></h3>
+    <p>คะแนนสะสม: <span id="score">0</span></p>
+    <div id="grid" class="grid"></div>
+    <button onclick="checkAnswer()">ตรวจคำตอบ</button>
+    <button onclick="newPuzzle()">ข้อต่อไป</button>
+    <button onclick="backMenu()">กลับเมนู</button>
+  </div>
 
-<script>
-
-
-const TEACHER_PASSWORD = "279515"; // ครูเปลี่ยนได้
+  <script>
 
 
-function loadReports(){
-  const table = document.getElementById("reportTable");
-  table.innerHTML = "";
+    const TEACHER_PASSWORD = "279515"; // ครูเปลี่ยนได้
+    const REAL_EXAM_PASSWORD = "exam2026"; // ครูเปลี่ยนได้
 
-  db.ref("reports").on("value", snap=>{
-    table.innerHTML = "";
-    snap.forEach(child=>{
-      const r = child.val();
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${r.name}</td>
-        <td>${r.class}</td>
-        <td>${r.no}</td>
-        <td>${r.mode}</td>
-        <td>${r.score}</td>
-        <td>${r.time}</td>
-      `;
-      table.appendChild(tr);
-    });
-  });
-}
+    function exportCSV() {
+      db.ref("rooms").once("value", snap => {
+        let csv = "ชั้น,เลขที่,ชื่อ,ฝึก,เกม,สอบ\n";
 
+        snap.forEach(roomSnap => {
+          const room = roomSnap.key;
+          roomSnap.child("students").forEach(stuSnap => {
+            const s = stuSnap.val();
+            csv += `${room},${stuSnap.key},${s.name},${s.practice || 0},${s.game || 0},${s.exam || 0}\n`;
+          });
+        });
 
-function loginStudent(){
-  if(
-    !loginName.value.trim() ||
-    !loginClass.value.trim() ||
-    !loginNo.value.trim()
-  ){
-    alert("กรุณากรอกข้อมูลให้ครบ");
-    return;
-  }
+        const BOM = "\uFEFF";
+        const blob = new Blob([BOM + csv], {
+          type: "text/csv;charset=utf-8;"
+        });
 
-  localStorage.setItem("student", JSON.stringify({
-    role: "student",
-    name: loginName.value.trim(),
-    class: loginClass.value.trim(),
-    no: loginNo.value.trim()
-  }));
-
-  document.getElementById("login").classList.add("hidden");
-  document.getElementById("menu").classList.remove("hidden");
-  showStudent(); // ซ่อนฟอร์มกรอกชื่อเดิม
-}
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "sudoku_scores.csv";
+        a.click();
+      });
+    }
 
 
-function loginTeacher(){
-  if(teacherPass.value !== TEACHER_PASSWORD){
-    alert("รหัสครูไม่ถูกต้อง");
-    return;
-  }
+    function loadReports() {
+      const table = document.getElementById("reportTable");
+      table.innerHTML = "";
 
-  localStorage.setItem("teacher", "true");
-
-  document.getElementById("login").classList.add("hidden");
-  document.getElementById("teacherPage").classList.remove("hidden");
-
-  loadReports();
-}
-
-function loadTeacher(){
-  document.getElementById("menu").classList.add("hidden");
-  document.getElementById("teacher").classList.remove("hidden");
-
-  const table = document.getElementById("scoreTable");
-  table.innerHTML = "";
-
-  db.ref("rooms/P5-1/students").on("value", snap=>{
-    table.innerHTML="";
-    snap.forEach(child=>{
-      const s = child.val();
-      table.innerHTML += `
+      db.ref("reports").on("value", snap => {
+        table.innerHTML = "";
+        snap.forEach(child => {
+          const r = child.val();
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
         <tr>
-          <td>${child.key}</td>
-          <td>${s.name}</td>
-          <td>${s.practice||0}</td>
-          <td>${s.game||0}</td>
-          <td>${s.exam||0}</td>
-        </tr>
+          <td>${r.name}</td> 
+          <td>${r.class}</td> 
+          <td>${r.no}</td> 
+          <td>${r.mode}</td> 
+          <td>${r.score}</td> 
+          <td>${r.level || "-"}</td>  
+          <td>${r.time}</td>  
+          <td>    
+            <button onclick='generatePDFForTeacher(   
+            "${r.name}",      
+            "${r.class}",      
+            "${r.no}",     
+            "${r.score}",      
+            "${r.level}"
+            )'>📄 PDF</button> 
+            </td>
+            </tr>
       `;
-    });
-  });
-}
+          table.appendChild(tr);
+        });
+      });
+    }
 
+    function generatePDFForTeacher(name, cls, no, score, level){
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
 
-function saveReport(mode, score){
-  const stu = JSON.parse(localStorage.getItem("student"));
-  if(!stu) return;
+      let y = 20;
 
-  console.log("SAVE REPORT", stu.name, mode, score);
+      doc.setFontSize(16);
+      doc.text("ใบรายงานผลการทดสอบ", 105, y, { align:"center" });
 
-  db.ref("reports").push({
-    name: stu.name,
-    class: stu.class,
-    no: stu.no,
-    mode: mode,
-    score: score,
-    time: new Date().toLocaleString()
-  });
-}
+      y += 15;
+      doc.setFontSize(12);
+      doc.text(`ชื่อ-สกุล: ${name}`, 20, y);
+      y += 8;
+      doc.text(`ชั้น: ${cls}    เลขที่: ${no}`, 20, y);
 
+      y += 12;
+      doc.text(`คะแนนที่ได้: ${score} / 20`, 20, y);
+      y += 8;
+      doc.text(`ระดับผลสัมฤทธิ์: ${level}`, 20, y);
 
-function showStudent(){
-  const stu = JSON.parse(localStorage.getItem("student"));
-  if(!stu) return;
+      y += 12;
+      doc.text(`ออกรายงานโดยครู`, 20, y);
+      doc.text(`วันที่: ${new Date().toLocaleDateString("th-TH")}`, 20, y+8);
 
-  const text = `${stu.name} | ชั้น ${stu.class} เลขที่ ${stu.no}`;
-
-  if(document.getElementById("stuInfoPractice"))
-    stuInfoPractice.innerText = text;
-
-  if(document.getElementById("stuInfoGame"))
-    stuInfoGame.innerText = text;
-
-  if(document.getElementById("stuInfoExam"))
-    stuInfoExam.innerText = text;
-
-  // 🔒 ซ่อนฟอร์มกรอกชื่อเดิมในเมนู
-  const form = document.getElementById("studentForm");
-  if(form) form.style.display = "none";
-}
-
-
-function checkStudent(){
-  const stu = JSON.parse(localStorage.getItem("student"));
-  if(!stu){
-    alert("กรุณาเข้าสู่ระบบนักเรียน");
-    return false;
-  }
-  return true;
-}
+      doc.save(`รายงาน_${name}.pdf`);
+    }
 
 
 
-/* ===== SOLUTION BASE ===== */
-const baseSolution=[
- [1,2,3,4,5,6],
- [4,5,6,1,2,3],
- [2,3,1,5,6,4],
- [5,6,4,2,3,1],
- [3,1,2,6,4,5],
- [6,4,5,3,1,2]
-];
-
-let solution=[];
-let holes=16;
-let score=0;
-
-const grid=document.getElementById("grid");
-const scoreEl=document.getElementById("score");
-const levelText=document.getElementById("levelText");
-
-/* ===== UTIL ===== */
-function shuffle(arr){
-  return arr.sort(()=>Math.random()-0.5);
-}
-
-/* ===== RANDOMIZE SOLUTION ===== */
-function randomizeSolution(){
-  solution=JSON.parse(JSON.stringify(baseSolution));
-
-  const map=shuffle([1,2,3,4,5,6]);
-  solution=solution.map(r=>r.map(n=>map[n-1]));
-
-  for(let b=0;b<3;b++){
-    const rows=shuffle([0,1]);
-    [solution[b*2+rows[0]],solution[b*2+rows[1]]]=
-    [solution[b*2+rows[1]],solution[b*2+rows[0]]];
-  }
-
-  for(let b=0;b<2;b++){
-    const cols=shuffle([0,1,2]);
-    solution=solution.map(row=>{
-      const t=[...row];
-      for(let i=0;i<3;i++){
-        t[b*3+i]=row[b*3+cols[i]];
+    function loginStudent() {
+      if (
+        !loginName.value.trim() ||
+        !loginClass.value.trim() ||
+        !loginNo.value.trim()
+      ) {
+        alert("กรุณากรอกข้อมูลให้ครบ");
+        return;
       }
-      return t;
-    });
-  }
-}
 
+      localStorage.setItem("student", JSON.stringify({
+        role: "student",
+        name: loginName.value.trim(),
+        class: loginClass.value.trim(),
+        no: loginNo.value.trim()
+      }));
 
-/* ===== DRAW GRID ===== */
-function drawGrid(){
-  grid.innerHTML="";
-  for(let r=0;r<6;r++){
-    for(let c=0;c<6;c++){
-      const cell=document.createElement("div");
-      cell.className="cell";
+      document.getElementById("login").classList.add("hidden");
+      document.getElementById("menu").classList.remove("hidden");
+      showStudent(); // ซ่อนฟอร์มกรอกชื่อเดิม
+    }
 
-      if(c===2) cell.style.borderRight="4px solid #3f5f93";
-      if(r===1||r===3) cell.style.borderBottom="4px solid #3f5f93";
-
-      if(Math.random()*36>holes){
-        cell.textContent=solution[r][c];
-        cell.classList.add("fixed");
-      }else{
-        const input=document.createElement("input");
-        input.dataset.r=r;
-        input.dataset.c=c;
-        input.maxLength=1;
-        input.oninput=()=>input.value=input.value.replace(/[^1-6]/g,"");
-        cell.appendChild(input);
+    
+    function loginTeacher() {
+      if (teacherPass.value !== TEACHER_PASSWORD) {
+        alert("รหัสครูไม่ถูกต้อง");
+        return;
       }
-      grid.appendChild(cell);
+
+      localStorage.setItem("teacher", "true");
+
+      document.getElementById("login").classList.add("hidden");
+      document.getElementById("teacherPage").classList.remove("hidden");
+
+      loadReports();
+
+      loadTeacher(); // ✅ สำคัญ
+    }
+
+
+    function loadTeacher() {
+      document.getElementById("menu").classList.add("hidden");
+      document.getElementById("teacherPage").classList.remove("hidden");
+
+      const table = document.getElementById("scoreTable");
+      table.innerHTML = "";
+
+      db.ref("rooms").on("value", snap => {
+        table.innerHTML = "";
+
+        snap.forEach(roomSnap => {
+          roomSnap.child("students").forEach(child => {
+            const s = child.val();
+            table.innerHTML += `
+          <tr>
+            <td>${child.key}</td>
+            <td>${s.name || "-"}</td>
+            <td>${s.practice || 0}</td>
+            <td>${s.game || 0}</td>
+            <td>${s.exam || 0}</td>
+          </tr>
+        `;
+          });
+        });
+      });
+    }
+
+
+    function loginExam(){
+
+      const user = document.getElementById("examUser").value.trim();
+      const cls  = document.getElementById("examClass").value.trim();
+      const no   = document.getElementById("examNo").value.trim();
+      const pass = document.getElementById("examPass").value;
+
+      if(!user || !cls || !no || !pass){
+        alert("ข้อมูลไม่ครบ");
+        return;
+      }
+
+      if(pass !== REAL_EXAM_PASSWORD){
+        alert("รหัสผิด");
+        return;
+      }
+
+      alert("ข้อมูลถูกต้อง");
+
+      localStorage.setItem("student", JSON.stringify({
+        role:"student",
+        name:user,
+        class:cls,
+        no:no
+      }));
+
+      document.getElementById("login").classList.add("hidden");
+      document.getElementById("realExam").classList.remove("hidden");
+
+      startRealExam();
+    }
+
+
+    function saveReport(mode, score) {
+      const stu = JSON.parse(localStorage.getItem("student"));
+      if (!stu) return;
+
+      console.log("SAVE REPORT", stu.name, mode, score);
+
+      db.ref("reports").push({
+        name: stu.name,
+        class: stu.class,
+        no: stu.no,
+        mode: mode,
+        score: score,
+        time: new Date().toLocaleString()
+
+      });
+    }
+
+
+    function showStudent() {
+      const stu = JSON.parse(localStorage.getItem("student"));
+      if (!stu) return;
+
+      const text = `${stu.name} | ชั้น ${stu.class} เลขที่ ${stu.no}`;
+
+      if (document.getElementById("stuInfoPractice"))
+        stuInfoPractice.innerText = text;
+
+      if (document.getElementById("stuInfoGame"))
+        stuInfoGame.innerText = text;
+
+      if (document.getElementById("stuInfoExam"))
+        stuInfoExam.innerText = text;
+
+      // 🔒 ซ่อนฟอร์มกรอกชื่อเดิมในเมนู
+      const form = document.getElementById("studentForm");
+      if (form) form.style.display = "none";
+    }
+
+
+    function checkStudent() {
+      const stu = JSON.parse(localStorage.getItem("student"));
+      if (!stu) {
+        alert("กรุณาเข้าสู่ระบบนักเรียน");
+        return false;
+      }
+      return true;
+    }
+
+
+
+    /* ===== SOLUTION BASE ===== */
+    const baseSolution = [
+      [1, 2, 3, 4, 5, 6],
+      [4, 5, 6, 1, 2, 3],
+      [2, 3, 1, 5, 6, 4],
+      [5, 6, 4, 2, 3, 1],
+      [3, 1, 2, 6, 4, 5],
+      [6, 4, 5, 3, 1, 2]
+    ];
+
+    let solution = [];
+    let holes = 16;
+    let score = 0;
+    let maxPracticeScore = 0;
+
+    const grid = document.getElementById("grid");
+    const scoreEl = document.getElementById("score");
+    const levelText = document.getElementById("levelText");
+
+    /* ===== UTIL ===== */
+    function shuffle(arr) {
+      return arr.sort(() => Math.random() - 0.5);
+    }
+
+    /* ===== RANDOMIZE SOLUTION ===== */
+    function randomizeSolution() {
+      solution = JSON.parse(JSON.stringify(baseSolution));
+
+      const map = shuffle([1, 2, 3, 4, 5, 6]);
+      solution = solution.map(r => r.map(n => map[n - 1]));
+
+      for (let b = 0; b < 3; b++) {
+        const rows = shuffle([0, 1]);
+        [solution[b * 2 + rows[0]], solution[b * 2 + rows[1]]] =
+          [solution[b * 2 + rows[1]], solution[b * 2 + rows[0]]];
+      }
+
+      for (let b = 0; b < 2; b++) {
+        const cols = shuffle([0, 1, 2]);
+        solution = solution.map(row => {
+          const t = [...row];
+          for (let i = 0; i < 3; i++) {
+            t[b * 3 + i] = row[b * 3 + cols[i]];
+          }
+          return t;
+        });
+      }
+    }
+
+    function generatePDF(){
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      const stu = JSON.parse(localStorage.getItem("student")) || {
+        name: "ไม่ระบุ",
+        class: "-",
+        no: "-"
+      };
+
+      const level = getAchievementLevel(examScore);
+
+      let y = 20;
+
+      doc.setFontSize(16);
+      doc.text("ใบรายงานผลการทดสอบ", 105, y, { align: "center" });
+
+      y += 15;
+      doc.setFontSize(12);
+      doc.text(`ชื่อ-สกุล: ${stu.name}`, 20, y);
+      y += 8;
+      doc.text(`ชั้น: ${stu.class}    เลขที่: ${stu.no}`, 20, y);
+
+      y += 12;
+      doc.text(`คะแนนที่ได้: ${examScore} / ${REAL_EXAM_TOTAL}`, 20, y);
+      y += 8;
+      doc.text(`ระดับผลสัมฤทธิ์: ${level}`, 20, y);
+
+      y += 12;
+      doc.text(`วันที่สอบ: ${new Date().toLocaleDateString("th-TH")}`, 20, y);
+
+      doc.save(`รายงานผล_${stu.name}.pdf`);
+    }
+
+
+    /* ===== DRAW GRID ===== */
+    function drawGrid() {
+      grid.innerHTML = "";
+      for (let r = 0; r < 6; r++) {
+        for (let c = 0; c < 6; c++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+
+          if (c === 2) cell.style.borderRight = "4px solid #3f5f93";
+          if (r === 1 || r === 3) cell.style.borderBottom = "4px solid #3f5f93";
+
+          if (Math.random() * 36 > holes) {
+            cell.textContent = solution[r][c];
+            cell.classList.add("fixed");
+          } else {
+            const input = document.createElement("input");
+            input.dataset.r = r;
+            input.dataset.c = c;
+            input.maxLength = 1;
+            input.oninput = () => input.value = input.value.replace(/[^1-6]/g, "");
+            cell.appendChild(input);
+          }
+          grid.appendChild(cell);
+        }
+      }
+    }
+
+    /* ===== CHECK ===== */
+    function checkAnswer() {
+      document.querySelectorAll(".cell input").forEach(inp => {
+        const r = inp.dataset.r;
+        const c = inp.dataset.c;
+        if (parseInt(inp.value) === solution[r][c]) {
+          if (!inp.parentElement.classList.contains("correct")) {
+            score++;
+            scoreEl.innerText = score;
+          }
+          inp.parentElement.classList.add("correct");
+          inp.parentElement.classList.remove("wrong");
+        } else {
+          inp.parentElement.classList.add("wrong");
+          inp.parentElement.classList.remove("correct");
+        }
+      });
+
+      // ✅ เก็บคะแนนที่มากที่สุด
+      if (score > maxPracticeScore) {
+        maxPracticeScore = score;
+        saveScore("practice", maxPracticeScore);
+      }
+    }
+
+
+
+    /* ===== FLOW ===== */
+    function startPractice() {
+      showStudent();
+      if (!checkStudent()) return;
+
+      holes = parseInt(document.getElementById("level").value);
+      levelText.innerText = "ระดับ: " + document.getElementById("level").selectedOptions[0].text;
+      document.getElementById("menu").classList.add("hidden");
+      document.getElementById("practice").classList.remove("hidden");
+      score = 0;
+      maxPracticeScore = 0;
+      scoreEl.innerText = 0;
+      newPuzzle();
+    }
+
+    function newPuzzle() {
+      randomizeSolution();
+      drawGrid();
+    }
+
+  </script>
+  
+  <div class="card realExam hidden" id="realExam">
+    <h3>📄 ข้อสอบ ข้อที่ <span id="qNo">1</span> / <span id="qTotal">20</span></h3>
+    <div id="questionText"></div>  
+    <div id="choices" class="choice-grid"></div>  
+    <button onclick="nextQuestion()">ถัดไป</button>
+  </div>
+  <script>
+
+    let sudokuCorrect = false;
+    let qIndex = 0;
+    let examScore = 0;
+    let studentAnswers = [];
+  const REAL_EXAM_TOTAL = 20;
+
+  function startRealExam(){
+    qIndex = 0;
+    examScore = 0;
+    studentAnswers = [];
+
+    document.getElementById("qTotal").innerText = REAL_EXAM_TOTAL;
+
+    document.getElementById("realExam").classList.remove("hidden");
+    showQuestion();
+  }
+  
+  function renderFullSudoku(gridData){
+    let html = `<div class="grid">`;
+
+    for(let r=0;r<6;r++){
+      for(let c=0;c<6;c++){
+        const cell = gridData[r][c];
+        let style = "";
+        if(c===2) style += "border-right:4px solid #3f5f93;";
+        if(r===1 || r===3) style += "border-bottom:4px solid #3f5f93;";
+
+        if(cell===""){
+          html += `
+            <div class="cell" style="${style}">
+              <input maxlength="1"
+                data-r="${r}" data-c="${c}"
+                oninput="this.value=this.value.replace(/[^1-6]/g,'')">
+            </div>`;
+        } else {
+          html += `<div class="cell fixed" style="${style}">${cell}</div>`;
+        }
+      }
+    }
+
+    html += `</div>`;
+    return html;
+  }
+
+  function checkSudokuAnswer(q){
+    const inputs = document.querySelectorAll("#questionText input");
+    let wrong = 0;
+
+    for(const inp of inputs){
+      const r = parseInt(inp.dataset.r);
+      const c = parseInt(inp.dataset.c);
+
+      if(!inp.value){
+        return { complete:false, wrong:0 };
+      }
+
+      if(parseInt(inp.value) !== q.solution[r][c]){
+        wrong++;
+      }
+    }
+
+    return {
+      complete: true,
+      wrong: wrong
+    };
+  }
+
+  function renderExamGrid(gridData){
+    let html = `<div class="grid">`;
+
+    for(let r=0;r<6;r++){
+      for(let c=0;c<6;c++){
+        const cell = gridData[r][c];
+        let cls = "cell";
+        let content = "";
+
+        // เส้นบล็อก 3×2
+        let style = "";
+        if(c===2) style += "border-right:4px solid #3f5f93;";
+        if(r===1 || r===3) style += "border-bottom:4px solid #3f5f93;";
+
+        // ช่อง A B C
+        if(typeof cell==="string" && /^[A-Z]$/.test(cell)){
+          cls += " exam-mark";
+          content = cell;
+        }
+        // ช่องว่าง
+        else if(cell===""){
+          cls += " exam-blank";
+          content = `<input maxlength="1"
+            oninput="this.value=this.value.replace(/[^1-6]/g,'')">`;
+        }
+        // ตัวเลขล็อก
+        else{
+          cls += " fixed";
+          content = cell;
+        }
+
+        html += `<div class="${cls}" style="${style}">${content}</div>`;
+      }
+    }
+
+    html += `</div>`;
+    return html;
+  }
+
+  document.getElementById("questionText").innerHTML = html;
+
+  const box = document.getElementById("choices");
+  box.innerHTML = "";
+  q.choices.forEach((c,i)=>{
+    box.innerHTML += `
+      <label>
+        <input type="radio" name="choice" value="${i}">
+        <span>${c}</span>
+      </label>
+    `;
+  });
+
+  function showQuestion(){
+    const q = examQuestions[qIndex];
+    let html = "";
+
+    document.getElementById("qNo").innerText = qIndex + 1;
+
+    html += `<div class="q-title">${q.title}</div>`;
+
+    if(q.conditionTitle){
+      html += `<div class="q-cond-title">${q.conditionTitle}</div>`;
+    }
+    if(q.conditions){
+      html += `<ul class="q-cond">${q.conditions.map(c=>`<li>${c}</li>`).join("")}</ul>`;
+    }
+    if(q.question){
+      html += `<div class="q-question">${q.question}</div>`;
+    }
+
+    if(q.type === "sudoku"){
+      html += renderFullSudoku(q.grid);
+    }
+    else if(q.grid){
+      html += renderExamGrid(q.grid);
+    }
+
+    document.getElementById("questionText").innerHTML = html;
+
+    const box = document.getElementById("choices");
+    box.innerHTML = "";
+
+    if(q.choices){
+      q.choices.forEach((c,i)=>{
+        box.innerHTML += `
+          <label>
+            <input type="radio" name="choice" value="${i}">
+            <span>${c}</span>
+          </label>`;
+      });
     }
   }
-}
 
-/* ===== CHECK ===== */
-function checkAnswer(){
-  document.querySelectorAll(".cell input").forEach(inp=>{
-    const r=inp.dataset.r;
-    const c=inp.dataset.c;
-    if(parseInt(inp.value)===solution[r][c]){
-      if(!inp.parentElement.classList.contains("correct")){
-        score++;
-        scoreEl.innerText=score;
-      }
-      inp.parentElement.classList.add("correct");
-      inp.parentElement.classList.remove("wrong");
-    }else{
-      inp.parentElement.classList.add("wrong");
-      inp.parentElement.classList.remove("correct");
+  function nextQuestion(){
+    const q = examQuestions[qIndex];
+
+    if(q.type === "sudoku"){
+      const result = checkSudokuAnswer(q);
+
+    if(!result.complete){
+      alert("กรุณากรอก Sudoku ให้ครบทุกช่อง");
+      return;
     }
-  });
-}
 
+    if(result.wrong <= 2){
+      examScore += 1;   // ✅ ได้ 1 คะแนน
+      studentAnswers.push("✔ ถูก (ผิด "+result.wrong+" ช่อง)");
+    } else {
+      studentAnswers.push("✘ ผิด ("+result.wrong+" ช่อง)");
+    }
+  }
 
-/* ===== FLOW ===== */
-function startPractice(){
-    showStudent();
-  if(!checkStudent()) return;
+    /* 🔥 ข้อปรนัย */
+    else{
+      const sel = document.querySelector("input[name=choice]:checked");
+      if(!sel){
+        alert("กรุณาเลือกคำตอบ");
+        return;
+      }
 
-  holes=parseInt(document.getElementById("level").value);
-  levelText.innerText="ระดับ: "+document.getElementById("level").selectedOptions[0].text;
-  document.getElementById("menu").classList.add("hidden");
-  document.getElementById("practice").classList.remove("hidden");
-  score=0;
-  scoreEl.innerText=0;
-  newPuzzle();
-}
+      const ans = parseInt(sel.value);
+      studentAnswers.push(ans);
 
-function newPuzzle(){
-  randomizeSolution();
-  drawGrid();
-}
+      if(ans === q.answer){
+        examScore++;
+      }
+    }
 
-function backMenu(){
-  saveReport("แบบฝึก", score);
-  saveScore("practice", score);
+    qIndex++;
+    if(qIndex < REAL_EXAM_TOTAL){
+      showQuestion();
+    } else {
+      finishExam();
+    }
+  }
+  </script>
+  <script>
+    
+    function getAchievementLevel(score){
+      if(score >= 17) return "ดีมาก";
+      if(score >= 14) return "ดี";
+      if(score >= 10) return "ปานกลาง";
+      return "ต้องปรับปรุง";
+    }
 
-  document.getElementById("practice").classList.add("hidden");
-  document.getElementById("menu").classList.remove("hidden");
-}
+  function finishExam(){
+    const stu = JSON.parse(localStorage.getItem("student"));
+    const level = getAchievementLevel(examScore);
+    
+    document.getElementById("realExam").innerHTML = `
+      <div class="card">
+        <h2>📊 ผลการทำแบบทดสอบ</h2>
 
+        <p style="font-size:22px">
+          คะแนนที่ได้: <b>${examScore} / ${REAL_EXAM_TOTAL}</b>
+        </p>
+
+        <p style="font-size:20px">
+          ระดับผลสัมฤทธิ์: <b>${level}</b>
+        </p>
+
+        <button onclick="exitExam()" style="
+          padding:10px 25px;
+          margin:10px;
+          border:none;
+          border-radius:10px;
+          background:#2c3e50;
+          color:white;
+          font-size:16px;
+          cursor:pointer
+        ">
+          ปิด
+        </button>
+      </div>
+    `;
+
+    /* ✅ บันทึกผลสอบให้ครู */
+    if(stu){
+      db.ref("reports").push({
+        name: stu.name,
+        class: stu.class,
+        no: stu.no,
+        mode: "แบบทดสอบ",
+        score: examScore,
+        level: level,
+        time: new Date().toLocaleString()
+      });
+
+      saveScore("exam", examScore);
+    }
+  }
+  </script>
+  <script>
+  function exitExam(){
+    localStorage.removeItem("realExam");
+
+    document.getElementById("realExam").classList.add("hidden");
+    document.getElementById("login").classList.remove("hidden");
+  }
 </script>
 
-
-<div class="card hidden" id="game">
+  <div class="card hidden" id="game">
     <p>👤 <span id="stuInfoGame"></span></p>
 
     <h3>🐲 ด่านที่ <span id="stage">1</span></h3>
     <p>⭐ ดาว: <span id="stars">3</span></p>
-  
+
     <div style="font-size:50px">🐉</div>
-  
+
     <div id="gameGrid" class="grid"></div>
-  
+
     <button onclick="checkGame()">ส่งคำตอบ</button>
     <button onclick="backMenu()">🏠 กลับหน้าหลัก</button>
 
   </div>
   <script>
-    let stage=1;
-    let stars=3;
-    
-    const gameGrid=document.getElementById("gameGrid");
-    
-    function startGame(){
-        showStudent();
-        if(!checkStudent()) return;
+    let stage = 1;
+    let stars = 3;
 
-        stage=1;
-        stars=3;
-        
-        document.getElementById("stars").innerText=stars;
-        document.getElementById("stage").innerText=stage;
-        
-        document.getElementById("menu").classList.add("hidden");
-        document.getElementById("game").classList.remove("hidden");
-        
-        loadGameStage();
+    const gameGrid = document.getElementById("gameGrid");
+
+    function startGame() {
+      showStudent();
+      if (!checkStudent()) return;
+
+      stage = 1;
+      stars = 3;
+
+      document.getElementById("stars").innerText = stars;
+      document.getElementById("stage").innerText = stage;
+
+      document.getElementById("menu").classList.add("hidden");
+      document.getElementById("game").classList.remove("hidden");
+
+      loadGameStage();
     }
-    
-    function loadGameStage(){
+
+    function loadGameStage() {
       randomizeSolution();
-      gameGrid.innerHTML="";
-    
-      for(let r=0;r<6;r++){
-        for(let c=0;c<6;c++){
-          const cell=document.createElement("div");
-          cell.className="cell";
-    
-          if(c===2) cell.style.borderRight="4px solid #3f5f93";
-          if(r===1||r===3) cell.style.borderBottom="4px solid #3f5f93";
-    
-          if(Math.random()*36 > (10+stage*2)){
-            cell.textContent=solution[r][c];
+      gameGrid.innerHTML = "";
+
+      for (let r = 0; r < 6; r++) {
+        for (let c = 0; c < 6; c++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+
+          if (c === 2) cell.style.borderRight = "4px solid #3f5f93";
+          if (r === 1 || r === 3) cell.style.borderBottom = "4px solid #3f5f93";
+
+          if (Math.random() * 36 > (10 + stage * 2)) {
+            cell.textContent = solution[r][c];
             cell.classList.add("fixed");
-          }else{
-            const input=document.createElement("input");
-            input.dataset.r=r;
-            input.dataset.c=c;
-            input.maxLength=1;
-            input.oninput=()=>input.value=input.value.replace(/[^1-6]/g,"");
+          } else {
+            const input = document.createElement("input");
+            input.dataset.r = r;
+            input.dataset.c = c;
+            input.maxLength = 1;
+            input.oninput = () => input.value = input.value.replace(/[^1-6]/g, "");
             cell.appendChild(input);
           }
           gameGrid.appendChild(cell);
@@ -589,171 +1417,172 @@ function backMenu(){
       }
     }
 
-    
-    function checkGame(){
-      let wrong=0;
-    
-      document.querySelectorAll("#gameGrid input").forEach(inp=>{
-        const r=inp.dataset.r;
-        const c=inp.dataset.c;
-        if(parseInt(inp.value)!==solution[r][c]) wrong++;
+
+    function checkGame() {
+      let wrong = 0;
+
+      document.querySelectorAll("#gameGrid input").forEach(inp => {
+        const r = inp.dataset.r;
+        const c = inp.dataset.c;
+        if (parseInt(inp.value) !== solution[r][c]) wrong++;
       });
-    
-      if(wrong===0){
-        stars+=3;
+
+      if (wrong === 0) {
+        stars += 3;
         stage++;
         alert("🎉 ผ่านด่าน! +3 ดาว");
-      }else if(wrong<=2){
-        stars+=1;
+      } else if (wrong <= 2) {
+        stars += 1;
         stage++;
         alert("🙂 เกือบสมบูรณ์ +1 ดาว");
-      }else{
+      } else {
         stars--;
         alert("💥 ผิดเยอะ -1 ดาว");
       }
-    
-      document.getElementById("stars").innerText=stars;
-      document.getElementById("stage").innerText=stage;
-    
-    if(stars<=0){
-      saveReport("เกม", stars);
-      saveScore("game", stars);
-      alert("☠️ เกมโอเวอร์");
-      backMenu();
-    }else{
-      loadGameStage(); // ✅ เพิ่ม
+
+
+      document.getElementById("stars").innerText = stars;
+      document.getElementById("stage").innerText = stage;
+
+      if (stars <= 0 || stage > 5) {
+        alert("☠️ เกมโอเวอร์");
+        saveReport("เกม", stars);
+        saveScore("game", stars);
+        backMenu();
+        return;
+      }
+
     }
-  }
 
-</script>
+  </script>
 
-<div class="card hidden" id="exam">
+  <div class="card hidden" id="exam">
     <p>👤 <span id="stuInfoExam"></span></p>
 
     <h3>📝 แบบทดสอบ ข้อที่ <span id="examNo">1</span> / 5</h3>
     <p>⏱ เวลา: <span id="time">300</span> วินาที</p>
-  
+
     <div id="examGrid" class="grid"></div>
-  
+
     <button onclick="submitExam()">ส่งคำตอบ</button>
     <button onclick="backMenu()">🏠 กลับหน้าหลัก</button>
   </div>
   <script>
-    let examIndex=0;
-    let totalScore=0;
+    let examIndex = 0;
+    let totalScore = 0;
     let timer;
-    let timeLeft=300;
-    
-    const examGrid=document.getElementById("examGrid");
-    const timeText=document.getElementById("time");
-    
-    const examLevels=[
-      {lock:22}, // ง่าย
-      {lock:20},
-      {lock:18}, // ปานกลาง
-      {lock:16},
-      {lock:14}  // ยาก
+    let timeLeft = 300;
+
+    const examGrid = document.getElementById("examGrid");
+    const timeText = document.getElementById("time");
+
+    const examLevels = [
+      { lock: 22 }, // ง่าย
+      { lock: 20 },
+      { lock: 18 }, // ปานกลาง
+      { lock: 16 },
+      { lock: 14 }  // ยาก
     ];
-    
-    function startExam(){
-        showStudent();
-        if(!checkStudent()) return;
-        
-        examIndex=0;
-        totalScore=0;
-        document.getElementById("menu").classList.add("hidden");
-        document.getElementById("exam").classList.remove("hidden");
-        loadExam();
+
+    function startExam() {
+      showStudent();
+      if (!checkStudent()) return;
+
+      examIndex = 0;
+      totalScore = 0;
+      document.getElementById("menu").classList.add("hidden");
+      document.getElementById("exam").classList.remove("hidden");
+      loadExam();
     }
 
-    function loadExam(){
-  clearInterval(timer);
-  timeLeft = 300;
-  timeText.innerText = timeLeft;
+    function loadExam() {
+      clearInterval(timer);
+      timeLeft = 300;
+      timeText.innerText = timeLeft;
 
-  document.getElementById("examNo").innerText = examIndex + 1;
+      document.getElementById("examNo").innerText = examIndex + 1;
 
-  randomizeSolution();
-  examGrid.innerHTML = "";
+      randomizeSolution();
+      examGrid.innerHTML = "";
 
-  const lock = examLevels[examIndex].lock;
+      const lock = examLevels[examIndex].lock;
 
-  /* ===== สุ่มตำแหน่งล็อก ===== */
-  let positions = [];
-  for(let i=0;i<36;i++) positions.push(i);
-  positions.sort(()=>Math.random()-0.5);
-  const locked = positions.slice(0, lock);
+      /* ===== สุ่มตำแหน่งล็อก ===== */
+      let positions = [];
+      for (let i = 0; i < 36; i++) positions.push(i);
+      positions.sort(() => Math.random() - 0.5);
+      const locked = positions.slice(0, lock);
 
-  for(let i=0;i<36;i++){
-    const r = Math.floor(i / 6);
-    const c = i % 6;
+      for (let i = 0; i < 36; i++) {
+        const r = Math.floor(i / 6);
+        const c = i % 6;
 
-    const cell = document.createElement("div");
-    cell.className = "cell";
+        const cell = document.createElement("div");
+        cell.className = "cell";
 
-    /* เส้น 3×2 */
-    if(c === 2) cell.style.borderRight = "4px solid #3f5f93";
-    if(r === 1 || r === 3) cell.style.borderBottom = "4px solid #3f5f93";
+        /* เส้น 3×2 */
+        if (c === 2) cell.style.borderRight = "4px solid #3f5f93";
+        if (r === 1 || r === 3) cell.style.borderBottom = "4px solid #3f5f93";
 
-    if(locked.includes(i)){
-      cell.textContent = solution[r][c];
-      cell.classList.add("fixed");
-    }else{
-      const input = document.createElement("input");
-      input.dataset.r = r;
-      input.dataset.c = c;
-      input.maxLength = 1;
-      input.oninput = () => {
-        input.value = input.value.replace(/[^1-6]/g,"");
-      };
-      cell.appendChild(input);
+        if (locked.includes(i)) {
+          cell.textContent = solution[r][c];
+          cell.classList.add("fixed");
+        } else {
+          const input = document.createElement("input");
+          input.dataset.r = r;
+          input.dataset.c = c;
+          input.maxLength = 1;
+          input.oninput = () => {
+            input.value = input.value.replace(/[^1-6]/g, "");
+          };
+          cell.appendChild(input);
+        }
+
+        examGrid.appendChild(cell);
+      }
+
+      startTimer();
     }
 
-    examGrid.appendChild(cell);
-  }
-
-  startTimer();
-}
-
-    function startTimer(){
-      timer=setInterval(()=>{
+    function startTimer() {
+      timer = setInterval(() => {
         timeLeft--;
-        timeText.innerText=timeLeft;
-        if(timeLeft<=0){
+        timeText.innerText = timeLeft;
+        if (timeLeft <= 0) {
           clearInterval(timer);
           submitExam();
         }
-      },1000);
+      }, 1000);
     }
-    
-    function submitExam(){
+
+    function submitExam() {
       clearInterval(timer);
-    
-      let wrong=0;
-      let total=0;
-    
-      document.querySelectorAll("#examGrid input").forEach(inp=>{
+
+      let wrong = 0;
+      let total = 0;
+
+      document.querySelectorAll("#examGrid input").forEach(inp => {
         total++;
-        const r=inp.dataset.r;
-        const c=inp.dataset.c;
-        if(parseInt(inp.value)!==solution[r][c]) wrong++;
+        const r = inp.dataset.r;
+        const c = inp.dataset.c;
+        if (parseInt(inp.value) !== solution[r][c]) wrong++;
       });
-    
-      let score=5;
-      if(wrong>0){
-        score-= (5/total)*wrong;
+
+      let score = 5;
+      if (wrong > 0) {
+        score -= (5 / total) * wrong;
       }
-      if(timeLeft<=0){
-        score-=1;
+      if (timeLeft <= 0) {
+        score -= 1;
       }
-    
-      if(score<0) score=0;
-      totalScore+=score;
-    
+
+      if (score < 0) score = 0;
+      totalScore += score;
+
       examIndex++;
-      if(examIndex<5){
+      if (examIndex < 5) {
         loadExam();
-      }else{
+      } else {
         alert(`🎉 สอบเสร็จแล้ว\nคะแนนรวม: ${totalScore.toFixed(2)} / 25`);
         saveReport("แบบทดสอบ", totalScore.toFixed(2));
         saveScore("exam", totalScore.toFixed(2));
@@ -761,86 +1590,68 @@ function backMenu(){
       }
     }
 
-    function backMenu(){
-        clearInterval(timer);
-        document.getElementById("practice").classList.add("hidden");
-        document.getElementById("game").classList.add("hidden");
-        document.getElementById("exam").classList.add("hidden");
-        document.getElementById("menu").classList.remove("hidden");
-    }
+    function backMenu() {
+      if (document.getElementById("practice").classList.contains("hidden") === false) {
+        saveReport("แบบฝึก", maxPracticeScore);
+      }
 
-    function exportCSV(){
-      db.ref("reports").once("value", snap=>{
-        let csv = "ชื่อ,ชั้น,เลขที่,โหมด,คะแนน,เวลา\n";
-        
-        snap.forEach(child=>{
-          const r = child.val();
-          csv += `${r.name},${r.class},${r.no},${r.mode},${r.score},${r.time}\n`;
-        });
-        
-        const BOM = "\uFEFF";
-        const blob = new Blob([BOM + csv], {
-          type:"text/csv;charset=utf-8;"
-        });
-        
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "sudoku_report.csv";
-        a.click();
-      });
-    }
+      clearInterval(timer);
 
-
-
- </script>
- <script>
-  function logout(){
-    // ล้างข้อมูลล็อกอิน
-    localStorage.removeItem("student");
-    localStorage.removeItem("teacher");
-  
-    // ซ่อนทุกหน้า
-    document.getElementById("menu").classList.add("hidden");
-    document.getElementById("practice").classList.add("hidden");
-    document.getElementById("game").classList.add("hidden");
-    document.getElementById("exam").classList.add("hidden");
-    document.getElementById("teacherPage").classList.add("hidden");
-  
-    // กลับหน้า Login
-    document.getElementById("login").classList.remove("hidden");
-  }
-  </script>  
-
-<script>
-  window.onload = function(){
-    const student = localStorage.getItem("student");
-    const teacher = localStorage.getItem("teacher");
-  
-    // ซ่อนทุกหน้าก่อน
-    document.getElementById("login").classList.add("hidden");
-    document.getElementById("menu").classList.add("hidden");
-    document.getElementById("practice").classList.add("hidden");
-    document.getElementById("game").classList.add("hidden");
-    document.getElementById("exam").classList.add("hidden");
-    document.getElementById("teacherPage").classList.add("hidden");
-  
-    if(teacher){
-      document.getElementById("teacherPage").classList.remove("hidden");
-      loadReports();
-    }
-    else if(student){
+      document.getElementById("practice").classList.add("hidden");
+      document.getElementById("game").classList.add("hidden");
+      document.getElementById("exam").classList.add("hidden");
       document.getElementById("menu").classList.remove("hidden");
-      showStudent();
     }
-    else{
+  </script>
+
+  <script>
+    function logout() {
+      // ล้างข้อมูลล็อกอิน
+      localStorage.removeItem("student");
+      localStorage.removeItem("teacher");
+
+      // ซ่อนทุกหน้า
+      document.getElementById("menu").classList.add("hidden");
+      document.getElementById("practice").classList.add("hidden");
+      document.getElementById("game").classList.add("hidden");
+      document.getElementById("exam").classList.add("hidden");
+      document.getElementById("teacherPage").classList.add("hidden");
+
+      // กลับหน้า Login
       document.getElementById("login").classList.remove("hidden");
     }
-};
+  </script>
+
+  <script>
+    window.onload = function () {
+      const student = localStorage.getItem("student");
+      const teacher = localStorage.getItem("teacher");
+
+      // ซ่อนทุกหน้าก่อน
+      document.getElementById("login").classList.add("hidden");
+      document.getElementById("menu").classList.add("hidden");
+      document.getElementById("practice").classList.add("hidden");
+      document.getElementById("game").classList.add("hidden");
+      document.getElementById("exam").classList.add("hidden");
+      document.getElementById("teacherPage").classList.add("hidden");
+
+      if (teacher) {
+        document.getElementById("teacherPage").classList.remove("hidden");
+        loadReports();
+      }
+      else if (student) {
+        document.getElementById("menu").classList.remove("hidden");
+        showStudent();
+      }
+      else {
+        document.getElementById("login").classList.remove("hidden");
+      }
+    };
 
 
   </script>
-  
+
 
 </body>
+
 </html>
